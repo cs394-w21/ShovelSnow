@@ -11,6 +11,8 @@ export default function App() {
   );
 }
 
+const shovelerList = [];
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
