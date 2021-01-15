@@ -22,9 +22,6 @@ function RequestHelpBtn() {
 }
 
 
-<<<<<<< HEAD
-export default RequestHelpBtn;
-=======
 const styles = StyleSheet.create({
   RequestHelpBtn: {
     flex: 1,
@@ -36,4 +33,3 @@ const styles = StyleSheet.create({
 
 
 export default RequestHelpBtn;
->>>>>>> firebase_deployed
