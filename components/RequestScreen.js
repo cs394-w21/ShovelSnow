@@ -1,6 +1,6 @@
 import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
 import React, {useState} from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 function RequestHelpBtn() {
   const [requested, setRequested] = useState(0);
@@ -15,13 +15,21 @@ function RequestHelpBtn() {
   } 
 
   return (
-    <TouchableOpacity onPress={handleOnPress}>
+    <TouchableOpacity onPress={handleOnPress} style={styles.RequestHelpBtn}>
       <Text>{textInside[requested]}</Text>
     </TouchableOpacity>
   );
 }
 
 
+const styles = StyleSheet.create({
+  RequestHelpBtn: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 20,
+  },
+});
 
 
 export default RequestHelpBtn;

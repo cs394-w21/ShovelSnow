@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import RequestHelpBtn from './components/RequestScreen';
 import HomeScreen from './components/HomeScreen';
+import VolunteerScreen from './components/VolunteerScreen'
 
 const Stack = createStackNavigator();
 
@@ -14,6 +15,7 @@ export default function App() {
       <Stack.Navigator>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Request" component={RequestHelpBtn} />
+        <Stack.Screen name="Volunteer" component={VolunteerScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
