@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-// import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import {firebase} from '../firebase'
 
 
@@ -15,28 +15,47 @@ function VolunteerScreen() {
     useEffect(() => {
       const db = firebase.database().ref();
       db.on('value', snap => {
-        if (snap.val()) setRequestList(fixRequests(snap.val()))    ;
+        if (snap.val()) setRequestList(fixRequests(snap.val()));
       }, error => console.log(error));
     }, []);
 
-    console.log(requestList)
-
-
+    const markers = [
+      {
+        latlng: { latitude: 37.78825 , longitude: -122.4324},
+        title: 'marker1',
+        description: 'marker1 desc'
+      }, 
+      {
+        latlng: { latitude: 37.7883 , longitude: -122.433},
+        title: 'marker2',
+        description: 'marker2 desc'
+      }
+    ];
 
     return (
-      
       <View>
-        {/* <MapView
-            style={{flex:1}}
-            initialRegion={{
-            latitude: 37.78825,
-            longitude: -122.4324,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-            }}
-    /> */}
+        <MapView
+          style={{flex:1}}
+          initialRegion={{
+          latitude: 37.78825,
+          longitude: -122.4324,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+          }} 
+        >
+          {markers.map((marker, index) => {
+            return (
+              <Marker 
+                key={index}
+                coordinate={marker.latlng}
+                title={marker.title} 
+                description={marker.description}
+              />
+            );
+          })}
+        </MapView>
       <Text>{ requestList.requests.length === 0 ? 'loading' : requestList.requests[0].user }</Text>
-    </View>
+      </View>
     )
 }
 
