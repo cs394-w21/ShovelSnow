@@ -33,12 +33,12 @@ function VolunteerScreen() {
     ];
 
     return (
-      <View>
+      
         <MapView
           style={{flex:1}}
           initialRegion={{
-          latitude: 37.78825,
-          longitude: -122.4324,
+          latitude: 42.045597,
+          longitude: -87.688568,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
           }} 
@@ -54,14 +54,13 @@ function VolunteerScreen() {
             );
           })}
         </MapView>
-      <Text>{ requestList.requests.length === 0 ? 'loading' : requestList.requests[0].user }</Text>
-      </View>
+      
     )
 }
 
 const styles = StyleSheet.create({
     VolunteerScreen: {
-      flex: 4,
+      flex: 1,
 
     },
   });
