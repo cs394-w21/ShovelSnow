@@ -2,7 +2,6 @@ import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
 import React, {useState} from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import firebase from '../firebase'
-import Geocoder from 'react-native-geocoding';
 import Form from './Form'
 import * as Yup from 'yup';
 
@@ -19,31 +18,31 @@ const validationSchema = Yup.object().shape({
     .label('Title'),
 });
 
-Geocoder.init("300bfd70ae97e0cdc39aa8c66e930ada")
-
 const RequestHelpBtn = ({route}) => {
   const [requested, setRequested] = useState(0);
   const textInside = ['SHOVEL!', 'CANCEL!'];
   const [submitError, setSubmitError] = useState('');
 
 
-  async function handleSubmit(values) {
+  function handleSubmit(values) {
     const { user, time, addr } = values;
-    const request = { user, time, addr };
-    firebase.database().ref('requests').child(user).set(request).catch(error => {
-      setSubmitError(error.message);
+    let longitude;
+    let latitude;
+    fetch(`http://api.positionstack.com/v1/forward?access_key=300bfd70ae97e0cdc39aa8c66e930ada&query=${addr}`, {
+      method: 'GET'
+    })
+    .then((res) => res.json())
+    .then((resJson) => {
+      longitude = resJson['data']['results']['longitude'];
+      latitude = resJson['data']['results']['latitude'];
+    })
+    .then(() => {
+        const request = { user, time, addr, longitude, latitude };
+        firebase.database().ref('requests').child(user).set(request).catch(error => {
+          setSubmitError(error.message);
+        });
     });
   }
-
-
-  Geocoder.from("1630 Chicago Avenue, Evanston, IL")
-		.then(json => {
-			var location = json.results[0].geometry.location;
-			console.log(location);
-		})
-    .catch(error => console.warn(error));
-    
-  
 
   function handleOnPress() {
     if (requested == 0) {
@@ -59,7 +58,7 @@ const RequestHelpBtn = ({route}) => {
         <Form
           initialValues={{
             user: 'Jack',
-            addr: '1630 Chicago Avenue, Evanston, IL',
+            addr: '1630 Chicago Avenue, Evanston, Illinois, USA',
             time: 'Thu 12:00-13:50',
           }}
           validationSchema={validationSchema}
@@ -83,7 +82,7 @@ const RequestHelpBtn = ({route}) => {
                 leftIcon="format-title"
                 placeholder="1630 Chicago Avenue, Evanston, IL"
             />
-            <Form.Button title={'Update'} />
+            <Form.Button title={'Request'} />
             {<Form.ErrorMessage error={submitError} visible={true} />}
         </Form>
         {/* <TouchableOpacity onPress={handleOnPress} style={styles.RequestHelpBtn}>
