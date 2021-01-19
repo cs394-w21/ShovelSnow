@@ -1,22 +1,22 @@
 import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
 import React, {useState} from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
-import firebase from '../firebase'
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Alert } from 'react-native';
+import {firebase} from '../firebase'
 import Form from './Form'
 import * as Yup from 'yup';
 
-const validationSchema = Yup.object().shape({
-  user: Yup.string()
-    .required()
-    .label('User'),
-  meets: Yup.string()
-    .required()
-    .matches(/(M|Tu|W|Th|F)+ +\d\d?:\d\d-\d\d?:\d\d/, 'Must be weekdays followed by start and end time')
-    .label('Meeting times'),
-  title: Yup.string()
-    .required()
-    .label('Title'),
-});
+// const validationSchema = Yup.object().shape({
+//   user: Yup.string()
+//     .required()
+//     .label('User'),
+//   time: Yup.string()
+//     .required()
+//     .matches(/(M|Tu|W|Th|F)+ +\d\d?:\d\d-\d\d?:\d\d/, 'Must be weekdays followed by start and end time')
+//     .label('Meeting times'),
+//   title: Yup.string()
+//     .required()
+//     .label('Title'),
+// });
 
 const RequestHelpBtn = ({route}) => {
   const [requested, setRequested] = useState(0);
@@ -31,17 +31,22 @@ const RequestHelpBtn = ({route}) => {
     fetch(`http://api.positionstack.com/v1/forward?access_key=300bfd70ae97e0cdc39aa8c66e930ada&query=${addr}`, {
       method: 'GET'
     })
-    .then((res) => res.json())
+    .then((res) => {
+      res.json();
+      console.error(res)
+    })
     .then((resJson) => {
-      longitude = resJson['data']['results']['longitude'];
-      latitude = resJson['data']['results']['latitude'];
+      longitude = resJson['data'][0]['longitude'];
+      latitude = resJson['data'][0]['latitude'];
+      Alert.alert(latitude);
     })
     .then(() => {
         const request = { user, time, addr, longitude, latitude };
         firebase.database().ref('requests').child(user).set(request).catch(error => {
           setSubmitError(error.message);
         });
-    });
+    })
+    .catch(error => {console.error(error)});
   }
 
   function handleOnPress() {
@@ -61,7 +66,7 @@ const RequestHelpBtn = ({route}) => {
             addr: '1630 Chicago Avenue, Evanston, Illinois, USA',
             time: 'Thu 12:00-13:50',
           }}
-          validationSchema={validationSchema}
+          // validationSchema={validationSchema}
           onSubmit={values => handleSubmit(values)}
         >
             <Form.Field
