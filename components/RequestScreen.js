@@ -32,13 +32,11 @@ const RequestHelpBtn = ({route}) => {
       method: 'GET'
     })
     .then((res) => {
-      res.json();
-      console.error(res)
+      return res.json();
     })
     .then((resJson) => {
       longitude = resJson['data'][0]['longitude'];
       latitude = resJson['data'][0]['latitude'];
-      Alert.alert(latitude);
     })
     .then(() => {
         const request = { user, time, addr, longitude, latitude };

@@ -34,7 +34,6 @@ function VolunteerScreen() {
     ];
 
     return (
-      
         <MapView
           style={{flex:1}}
           initialRegion={{
@@ -55,8 +54,7 @@ function VolunteerScreen() {
             );
           })}
         </MapView>
-      
-    )
+    );
 }
 
 const styles = StyleSheet.create({
