@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Ale
 import {firebase} from '../firebase'
 import Form from './Form'
 import * as Yup from 'yup';
+import { NavigationContainer } from '@react-navigation/native';
 
 // const validationSchema = Yup.object().shape({
 //   user: Yup.string()
@@ -18,7 +19,7 @@ import * as Yup from 'yup';
 //     .label('Title'),
 // });
 
-const RequestHelpBtn = ({route}) => {
+const RequestHelpBtn = ({navigation}) => {
   const [requested, setRequested] = useState(0);
   const textInside = ['SHOVEL!', 'CANCEL!'];
   const [submitError, setSubmitError] = useState('');
@@ -66,7 +67,10 @@ const RequestHelpBtn = ({route}) => {
             time: 'Thu 12:00-13:50',
           }}
           // validationSchema={validationSchema}
-          onSubmit={values => handleSubmit(values)}
+          onSubmit={(values) => {
+            handleSubmit(values);
+            navigation.navigate('Home');
+          }}
         >
             <Form.Field
                 name="user"

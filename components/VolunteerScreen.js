@@ -6,34 +6,25 @@ import {firebase} from '../firebase'
 
 
 function VolunteerScreen() {
-    const [requestList, setRequestList] = useState({ requests: [] });
+    const [requestList, setRequestList] = useState({ 'requests' : []});
 
-    const fixRequests = json => ({
-      ...json,
-      requests: Object.values(json.requests)
-    });
+    const fixRequests = (json) => {
+      return {
+        ...json,
+        requests: Object.values(json['requests'])
+      };
+    };
 
     useEffect(() => {
       const db = firebase.database().ref();
       db.on('value', snap => {
-        if (snap.val()) setRequestList(fixRequests(snap.val()));
+        if (snap.val()) {
+          setRequestList(fixRequests(snap.val()));
+          console.log('requestList :>> ', requestList['requests']);
+        }
       }, error => console.log(error));
     }, []);
 
-
-
-    const markers = [
-      {
-        latlng: { latitude: 42.047208 , longitude: -87.679575},
-        user: 'Jack',
-        time: 'Thu 5:00-8:00'
-      }, 
-      {
-        latlng: { latitude: 37.7883 , longitude: -122.433},
-        user: 'marker2',
-        time: 'marker2 desc'
-      }
-    ]
 
     return (
         <MapView
@@ -45,20 +36,21 @@ function VolunteerScreen() {
           longitudeDelta: 0.0421,
           }} 
         >
-          {markers.map((marker, index) => {
-            return (
-              <Marker 
-                key={index}
-                coordinate={marker.latlng}
-                title={marker.user} 
-                description={marker.time}
-              />
-            );
-          })}
+          {
+            requestList['requests'].map((marker, index) => {
+              return (
+                <Marker 
+                  key={index}
+                  coordinate={{"latitude": marker.latitude, "longitude": marker.longitude}}
+                  title={marker.user} 
+                  description={marker.time}
+                />
+              );
+            })
+          }
         </MapView>
     );
 }
-
 const styles = StyleSheet.create({
     VolunteerScreen: {
       flex: 1,

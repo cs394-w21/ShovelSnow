@@ -1,17 +1,14 @@
 import * as firebase from 'firebase';
 import "firebase/database";
-
 const firebaseConfig = {
-  apiKey: "AIzaSyBVibuqj0j7B5utKiTKC4yl2gd3hZZyki0",
-  authDomain: "scheduler-7bd75.firebaseapp.com",
-  databaseURL: "https://scheduler-7bd75-default-rtdb.firebaseio.com",
-  projectId: "scheduler-7bd75",
-  storageBucket: "scheduler-7bd75.appspot.com",
-  messagingSenderId: "1035883013034",
-  appId: "1:1035883013034:web:9f6ab4c64a8270ef99c1d3",
-  measurementId: "G-NQZXSV20PK"
+  apiKey: "AIzaSyCbKHJxhz53HWo0wyjJVd4yxTb6NZDjSWU",
+  authDomain: "shovelsnow-316ad.firebaseapp.com",
+  databaseURL: "https://shovelsnow-316ad-default-rtdb.firebaseio.com",
+  projectId: "shovelsnow-316ad",
+  storageBucket: "shovelsnow-316ad.appspot.com",
+  messagingSenderId: "663821110835",
+  appId: "1:663821110835:web:b5281ea103c517cea8dd46"
 };
-
 firebase.initializeApp(firebaseConfig);
 
 export {firebase} ;
