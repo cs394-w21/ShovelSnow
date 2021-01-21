@@ -20,18 +20,20 @@ function VolunteerScreen() {
       }, error => console.log(error));
     }, []);
 
+
+
     const markers = [
       {
-        latlng: { latitude: 37.78825 , longitude: -122.4324},
-        title: 'marker1',
-        description: 'marker1 desc'
+        latlng: { latitude: 42.047208 , longitude: -87.679575},
+        user: 'Jack',
+        time: 'Thu 5:00-8:00'
       }, 
       {
         latlng: { latitude: 37.7883 , longitude: -122.433},
-        title: 'marker2',
-        description: 'marker2 desc'
+        user: 'marker2',
+        time: 'marker2 desc'
       }
-    ];
+    ]
 
     return (
         <MapView
@@ -48,8 +50,8 @@ function VolunteerScreen() {
               <Marker 
                 key={index}
                 coordinate={marker.latlng}
-                title={marker.title} 
-                description={marker.description}
+                title={marker.user} 
+                description={marker.time}
               />
             );
           })}

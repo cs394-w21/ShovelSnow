@@ -6,7 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 function HomeScreen( { navigation }) {
   return (
     <View style={styles.HomeScreen}>
-      <Text>Hello Home</Text>
+      <Text>Welcome to ShovelSnow!</Text>
       <Button title="go to request page" onPress={ () => navigation.navigate('Request') } />
       <Button title="go to volunteer page" onPress={ () => navigation.navigate('Volunteer') } />
     </View>

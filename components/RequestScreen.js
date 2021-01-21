@@ -37,9 +37,10 @@ const RequestHelpBtn = ({route}) => {
     .then((resJson) => {
       longitude = resJson['data'][0]['longitude'];
       latitude = resJson['data'][0]['latitude'];
+      accepted = 0;
     })
     .then(() => {
-        const request = { user, time, addr, longitude, latitude };
+        const request = { user, time, addr, longitude, latitude, accepted };
         firebase.database().ref('requests').child(user).set(request).catch(error => {
           setSubmitError(error.message);
         });
