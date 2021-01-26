@@ -29,6 +29,7 @@ const RequestHelpBtn = ({navigation}) => {
     const { user, time, addr } = values;
     let longitude;
     let latitude;
+    let accepted;
     fetch(`http://api.positionstack.com/v1/forward?access_key=300bfd70ae97e0cdc39aa8c66e930ada&query=${addr}`, {
       method: 'GET'
     })

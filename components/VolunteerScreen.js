@@ -1,12 +1,15 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Dimensions } from 'react-native';
+import MapView from 'react-native-maps';
+
 import {firebase} from '../firebase'
+import JobList from './JobList';
 
 
 
 function VolunteerScreen() {
     const [requestList, setRequestList] = useState({ 'requests' : []});
+    const [jobList, setJobList] = useState({ 'jobs': []});
 
     const fixRequests = (json) => {
       return {
@@ -15,48 +18,86 @@ function VolunteerScreen() {
       };
     };
 
+    const fixJobs = (job) => {
+      return {
+        jobs: [
+          ...(jobList['jobs'].filter(existingJob => existingJob.user != job.user)),
+          job   
+        ]
+      };
+    };
+
+    const removeJob = (user) => {
+      const newJobList = jobList['jobs'].filter(job => job.user !== user);
+      if (newJobList.length === 0) {
+        return { 
+          jobs: []
+        };
+      }
+      else {
+        return {
+          jobs: newJobList
+        };
+      }
+    };
+
+    const setRemoveJob = user => setJobList(removeJob(user));
+
     useEffect(() => {
       const db = firebase.database().ref();
-      db.on('value', snap => {
+
+      function handleData(snap) {
         if (snap.val()) {
           setRequestList(fixRequests(snap.val()));
-          console.log('requestList :>> ', requestList['requests']);
         }
-      }, error => console.log(error));
+      }
+
+      db.on('value', handleData, error => console.log(error));
+      return () => { db.off('value', handleData); };
     }, []);
 
-
     return (
+      <SafeAreaView style={styles.container} >
         <MapView
-          style={{flex:1}}
+          style={styles.map}
           initialRegion={{
-          latitude: 42.045597,
-          longitude: -87.688568,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
+            latitude: 42.045597,
+            longitude: -87.688568,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
           }} 
         >
           {
             requestList['requests'].map((marker, index) => {
               return (
-                <Marker 
+                <MapView.Marker 
                   key={index}
                   coordinate={{"latitude": marker.latitude, "longitude": marker.longitude}}
                   title={marker.user} 
                   description={marker.time}
+                  onPress={() => {
+                    setJobList(fixJobs(requestList['requests'][index]));
+                  }}
                 />
               );
             })
           }
         </MapView>
+        
+        <JobList jobs={jobList} select={setRemoveJob} />
+      </SafeAreaView>
     );
 }
 const styles = StyleSheet.create({
-    VolunteerScreen: {
-      flex: 1,
-
-    },
-  });
+  container: {
+    flex: 1,
+    flexDirection: 'column'
+  },
+  map: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height/2
+  },
+});
   
 
 export default VolunteerScreen;
