@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",
-    "@expo/webpack-config": "^0.12.54"
+    "@expo/webpack-config": "^0.12.55"
   },
   "private": true
 }
