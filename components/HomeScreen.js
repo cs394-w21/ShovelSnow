@@ -1,14 +1,18 @@
 import React from 'react';
-import { Button, Text, View, StyleSheet } from 'react-native';
+import { Button, Text, View, StyleSheet, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import snowyArt from '../assets/snowy.png';
 
 function HomeScreen( { navigation }) {
   return (
     <View style={styles.HomeScreen}>
-      <Text>Welcome to ShovelSnow!</Text>
-      <Button title="go to request page" onPress={ () => navigation.navigate('Request') } />
-      <Button title="go to volunteer page" onPress={ () => navigation.navigate('Volunteer') } />
+      <Text style={styles.Welcome}>Hi, {'\n'}welcome to ShovelSnow!</Text>
+      <Image style={styles.Img} source={require('../assets/snowy.png')} />
+      <View style={styles.btnCont}>
+          <Button style={styles.Btn} title="request help" onPress={ () => navigation.navigate('Request') } />
+          <Button style={styles.Btn} title="help a neighbor" onPress={ () => navigation.navigate('Volunteer') } />
+      </View>
     </View>
   );
 }
@@ -16,10 +20,28 @@ function HomeScreen( { navigation }) {
 const styles = StyleSheet.create({
   HomeScreen: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
     paddingTop: 20,
+    flexWrap: 'wrap'
   },
+  Welcome: {
+    padding: 10,
+    width: 250,
+    fontSize: 37.5,
+    fontWeight: 'bold',
+  },
+  btnCont: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20
+  },
+  Btn: {
+    borderRadius: 20,
+  },
+  Img: {
+    flex: 1.2,
+  }
 });
 
 
