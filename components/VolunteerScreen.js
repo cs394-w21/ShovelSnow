@@ -5,11 +5,9 @@ import MapView from 'react-native-maps';
 import {firebase} from '../firebase'
 import JobList from './JobList';
 
-
-
 function VolunteerScreen() {
     const [requestList, setRequestList] = useState({ 'requests' : []});
-    const [jobList, setJobList] = useState({ 'jobs': []});
+    const [jobList, setJobList] = useState({ 'jobs': [{user: "mike", addr: "111 Main"}]});
 
     const fixRequests = (json) => {
       return {
@@ -22,7 +20,7 @@ function VolunteerScreen() {
       return {
         jobs: [
           ...(jobList['jobs'].filter(existingJob => existingJob.user != job.user)),
-          job   
+          job
         ]
       };
     };
@@ -30,7 +28,7 @@ function VolunteerScreen() {
     const removeJob = (user) => {
       const newJobList = jobList['jobs'].filter(job => job.user !== user);
       if (newJobList.length === 0) {
-        return { 
+        return {
           jobs: []
         };
       }
@@ -65,15 +63,15 @@ function VolunteerScreen() {
             longitude: -87.688568,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
-          }} 
+          }}
         >
           {
             requestList['requests'].map((marker, index) => {
               return (
-                <MapView.Marker 
+                <MapView.Marker
                   key={index}
                   coordinate={{"latitude": marker.latitude, "longitude": marker.longitude}}
-                  title={marker.user} 
+                  title={marker.user}
                   description={marker.time}
                   onPress={() => {
                     setJobList(fixJobs(requestList['requests'][index]));
@@ -83,7 +81,7 @@ function VolunteerScreen() {
             })
           }
         </MapView>
-        
+
         <JobList jobs={jobList} select={setRemoveJob} />
       </SafeAreaView>
     );
@@ -98,6 +96,6 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').height/2
   },
 });
-  
+
 
 export default VolunteerScreen;

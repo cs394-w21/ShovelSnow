@@ -2,29 +2,30 @@ import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 
 function JobList({ jobs, select }) {
+  console.log(jobs['jobs'][0].user);
   return (
     <View style={styles.container}>
-      { 
+      {
         jobs['jobs'].map((job, i) => {
           return (
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.job}
               key={i}
-              onPress={() => {
-                select(job.user);
-              }} 
+              // onPress={() => {
+              //   select(job.user);
+              // }}
             >
-              <Text>
+              <Text style={styles.text}>
                 {`Press to cancel the request you accepted from ${job.user}`}
               </Text>
-              <Text>
+              <Text style={styles.text}>
                 {`Address: ${job.addr}`}
               </Text>
             </TouchableOpacity>
           );
         })
       }
-    </View>  
+    </View>
   );
 }
 
@@ -32,9 +33,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignContent: 'flex-start',
-    padding: 200
+
   },
   job: {
     flex: 1,
@@ -42,9 +41,13 @@ const styles = StyleSheet.create({
     alignContent: 'space-around',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ffa968',
+    backgroundColor: '#3d8ccc',
     margin: 10,
-    maxHeight: 100
+    maxHeight: 100,
+    borderRadius: 10,
+  },
+  text: {
+    color: 'white',
   }
 });
 

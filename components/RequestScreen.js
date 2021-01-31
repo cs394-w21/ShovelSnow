@@ -111,7 +111,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   Btn: {
-    color: '#fafafa'
+    color: '#fafafa',
+    backgroundColor: '#3d8ccc',
+
   }
 });
 
