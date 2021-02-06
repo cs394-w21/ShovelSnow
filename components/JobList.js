@@ -2,7 +2,6 @@ import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 
 function JobList({ jobs, select }) {
-  console.log(jobs['jobs'][0].user);
   return (
     <View style={styles.container}>
       {
@@ -11,9 +10,9 @@ function JobList({ jobs, select }) {
             <TouchableOpacity
               style={styles.job}
               key={i}
-              // onPress={() => {
-              //   select(job.user);
-              // }}
+              onPress={() => {
+                select(job.user);
+              }}
             >
               <Text style={styles.text}>
                 {`Press to cancel the request you accepted from ${job.user}`}

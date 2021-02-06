@@ -7,7 +7,7 @@ import JobList from './JobList';
 
 function VolunteerScreen() {
     const [requestList, setRequestList] = useState({ 'requests' : []});
-    const [jobList, setJobList] = useState({ 'jobs': [{user: "mike", addr: "111 Main"}]});
+    const [jobList, setJobList] = useState({ 'jobs': [] });
 
     const fixRequests = (json) => {
       return {
