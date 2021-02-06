@@ -8,7 +8,7 @@ function HomeScreen( { navigation }) {
   return (
     <View style={styles.HomeScreen}>
       <Text style={styles.Welcome}>Hi, {'\n'}welcome to ShovelSnow!</Text>
-      <Image style={styles.Img} source={require('../assets/snowy.png')} />
+      <Image style={styles.Img} source={require('../assets/snowy.png')} resizeMode="contain"/>
       <View style={styles.btnCont}>
           <Button style={styles.Btn} title="request help" onPress={ () => navigation.navigate('Request') } />
           <Button style={styles.Btn} title="help a neighbor" onPress={ () => navigation.navigate('Volunteer') } />
