@@ -56,12 +56,13 @@ const RequestHelpBtn = ({navigation}) => {
     } else {
       setRequested(0);
     }
-  } 
+  }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView>
       <ScrollView>
         <Form
+          style={styles.form}
           initialValues={{
             user: 'Jack',
             addr: '1630 Chicago Avenue, Evanston, Illinois, USA',
@@ -91,7 +92,7 @@ const RequestHelpBtn = ({navigation}) => {
                 leftIcon="format-title"
                 placeholder="1630 Chicago Avenue, Evanston, IL"
             />
-            <Form.Button title={'Request'} />
+            <Form.Button style={styles.Btn} title={'Request'} />
             {<Form.ErrorMessage error={submitError} visible={true} />}
         </Form>
         {/* <TouchableOpacity onPress={handleOnPress} style={styles.RequestHelpBtn}>
@@ -99,18 +100,21 @@ const RequestHelpBtn = ({navigation}) => {
         </TouchableOpacity> */}
       </ScrollView>
     </SafeAreaView>
-    
+
   );
 }
 
-
 const styles = StyleSheet.create({
-  RequestHelpBtn: {
+  form: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 20,
+    alignItems: 'center',
   },
+  Btn: {
+    color: '#fafafa',
+    backgroundColor: '#3d8ccc',
+
+  }
 });
 
 
