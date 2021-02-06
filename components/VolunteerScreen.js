@@ -29,7 +29,6 @@ function VolunteerScreen() {
       firebase.database().ref(`requests/${user}`).remove()
         .then(() => {
           const newJobList = jobList['jobs'].filter(job => job.user !== user);
-          console.log('newJobList :>> ', newJobList);
           setJobList({
             'jobs': newJobList
           });
