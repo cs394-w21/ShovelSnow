@@ -26,20 +26,20 @@ function VolunteerScreen() {
     };
 
     const removeJob = (user) => {
-      const newJobList = jobList['jobs'].filter(job => job.user !== user);
-      if (newJobList.length === 0) {
-        return {
-          jobs: []
-        };
-      }
-      else {
-        return {
-          jobs: newJobList
-        };
-      }
+      firebase.database().ref(`requests/${user}`).remove()
+        .then(() => {
+          const newJobList = jobList['jobs'].filter(job => job.user !== user);
+          console.log('newJobList :>> ', newJobList);
+          setJobList({
+            'jobs': newJobList
+          });
+        })
+        .catch(() => {
+          console.log('error deleting request');
+        });
     };
 
-    const setRemoveJob = user => setJobList(removeJob(user));
+    const setRemoveJob = user => removeJob(user);
 
     useEffect(() => {
       const db = firebase.database().ref();
