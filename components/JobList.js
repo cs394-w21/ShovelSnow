@@ -3,6 +3,17 @@ import { View, Text, StyleSheet, Button } from 'react-native';
 
 function JobList({ jobList, select }) {
   console.log('jobList :>> ', jobList);
+  console.log('jobList["jobs"] :>> ', Object.keys(jobList['jobs']));
+  if (Object.keys(jobList['jobs'])[0] === 'undefined' || Object.keys(jobList['jobs']).length === 0) {
+    return (
+      <View style={styles.container}>
+        <Text>
+          JobList will appear here  
+        </Text>  
+      </View>
+    )
+  }   
+
   return (
     <View style={styles.container}>
       {

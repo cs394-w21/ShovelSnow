@@ -26,7 +26,6 @@ const RequestHelpBtn = ({navigation}) => {
   const [submitError, setSubmitError] = useState('');
 
   const user = useContext(UserContext);
-  if(user) console.log(user);
 
   function handleSubmit(values) {
     const { addr } = values;

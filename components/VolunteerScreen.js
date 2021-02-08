@@ -1,12 +1,14 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Dimensions } from 'react-native';
 import MapView from 'react-native-maps';
 
 import {firebase} from '../firebase'
 import JobList from './JobList';
 import JobDetail from './JobDetail';
+import UserContext from "../UserContext";
 
-function VolunteerScreen({navigation}) {
+function VolunteerScreen() {
+    const user = useContext(UserContext);
     const [requestList, setRequestList] = useState({ 'requests': {} });
     const [jobList, setJobList] = useState({ 'jobs': {} });
     const [selectedJob, setSelectedJob] = useState(null);
@@ -43,12 +45,8 @@ function VolunteerScreen({navigation}) {
       };
     };
 
-    const accept = (job) => {
-      setJobList(fixJobs(job));
-    }
-
-    const reject = (job) => {
-      setSelectedJob(null);
+    function fixAndSetJobs(selectedJob) {
+      setJobList(fixJobs(selectedJob)); 
     }
 
     /*
@@ -99,7 +97,7 @@ function VolunteerScreen({navigation}) {
             })
           }
         </MapView>
-        <JobDetail selectedJob={selectedJob} accept={accept} reject={reject} />
+        <JobDetail selectedJob={selectedJob} setJobList={fixAndSetJobs} setSelectedJob={setSelectedJob} />
         <JobList jobList={jobList} select={console.log} />
       </SafeAreaView>
     );
@@ -114,7 +112,7 @@ const styles = StyleSheet.create({
   },
   mapView: {
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height/2
+    height: Dimensions.get('window').height/3
   },
 });
 
