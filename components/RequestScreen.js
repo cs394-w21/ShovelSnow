@@ -64,9 +64,8 @@ const RequestHelpBtn = ({navigation}) => {
         <Form
           style={styles.form}
           initialValues={{
-            user: 'Jack',
-            addr: '1630 Chicago Avenue, Evanston, Illinois, USA',
-            time: 'Thu 12:00-13:50',
+            user: '',
+            addr: ''
           }}
           // validationSchema={validationSchema}
           onSubmit={(values) => {
@@ -82,15 +81,9 @@ const RequestHelpBtn = ({navigation}) => {
                 autoFocus={true}
             />
             <Form.Field
-                name="time"
-                leftIcon="calendar-range"
-                placeholder="Thu 12:00-13:50"
-                autoCapitalize="none"
-            />
-            <Form.Field
                 name="addr"
                 leftIcon="format-title"
-                placeholder="1630 Chicago Avenue, Evanston, IL"
+                placeholder="Address"
             />
             <Form.Button style={styles.Btn} title={'Request'} />
             {<Form.ErrorMessage error={submitError} visible={true} />}
