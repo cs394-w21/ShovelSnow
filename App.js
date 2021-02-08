@@ -29,7 +29,8 @@ export default function App() {
   const [auth, setAuth] = useState();
 
   useEffect(() => {
-    firebase.auth().onAuthStateChanged((auth) => {
+    firebase.auth().onAuthStateChanged((auth, user) => {
+      console.log(auth);
       setAuth(auth);
     });
   }, []);
@@ -38,7 +39,10 @@ export default function App() {
     if (auth && auth.uid) {
       const db = firebase.database().ref('users').child(auth.uid);
       const handleData = snap => {
-        setUser({uid: auth.uid, ...snap.val()});
+        setUser({
+          uid: auth.uid, ...snap.val(),
+          name: auth.displayName
+        });
       }
       db.on('value', handleData, error => alert(error));
       return () => { db.off('value', handleData); };

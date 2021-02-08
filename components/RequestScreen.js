@@ -1,10 +1,11 @@
 import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Alert } from 'react-native';
 import {firebase} from '../firebase'
 import Form from './Form'
 import * as Yup from 'yup';
 import { NavigationContainer } from '@react-navigation/native';
+import UserContext from '../UserContext';
 
 // const validationSchema = Yup.object().shape({
 //   user: Yup.string()
@@ -24,12 +25,17 @@ const RequestHelpBtn = ({navigation}) => {
   const textInside = ['SHOVEL!', 'CANCEL!'];
   const [submitError, setSubmitError] = useState('');
 
+  const user = useContext(UserContext);
+  if(user) console.log(user);
 
   function handleSubmit(values) {
-    const { user, addr } = values;
+    const { addr } = values;
     let longitude;
     let latitude;
     let accepted;
+
+    if(requested == 1) return null;
+
     fetch(`http://api.positionstack.com/v1/forward?access_key=300bfd70ae97e0cdc39aa8c66e930ada&query=${addr}`, {
       method: 'GET'
     })
@@ -42,10 +48,12 @@ const RequestHelpBtn = ({navigation}) => {
       accepted = 0;
     })
     .then(() => {
-        const request = { user, addr, longitude, latitude, accepted };
-        firebase.database().ref('requests').child(user).set(request).catch(error => {
+        let displayName = user.name
+        const request = { displayName, addr, longitude, latitude, accepted };
+        firebase.database().ref('requests').child(user.uid).set(request).catch(error => {
           setSubmitError(error.message);
         });
+        setRequested(1);
     })
     .catch(error => {console.error(error)});
   }
@@ -64,7 +72,6 @@ const RequestHelpBtn = ({navigation}) => {
         <Form
           style={styles.form}
           initialValues={{
-            user: '',
             addr: ''
           }}
           // validationSchema={validationSchema}
@@ -73,13 +80,6 @@ const RequestHelpBtn = ({navigation}) => {
             navigation.navigate('Home');
           }}
         >
-            <Form.Field
-                name="user"
-                leftIcon="identifier"
-                placeholder="Jack"
-                autoCapitalize="none"
-                autoFocus={true}
-            />
             <Form.Field
                 name="addr"
                 leftIcon="format-title"

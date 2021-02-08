@@ -4,10 +4,12 @@ import MapView from 'react-native-maps';
 
 import {firebase} from '../firebase'
 import JobList from './JobList';
+import JobDetail from './JobDetail';
 
-function VolunteerScreen() {
+function VolunteerScreen({navigation}) {
     const [requestList, setRequestList] = useState({ 'requests' : []});
     const [jobList, setJobList] = useState({ 'jobs': [] });
+    const [selectedJob, setSelectedJob] = useState(null);
 
     const fixRequests = (json) => {
       return {
@@ -40,10 +42,15 @@ function VolunteerScreen() {
 
     const setRemoveJob = user => removeJob(user);
 
+    // const postJobs = firebase.database().ref('jobs').child(user.uid).set(jobList).catch(error => {
+    //     setSubmitError(error.message);
+    //   })
+
     useEffect(() => {
       const db = firebase.database().ref();
 
       function handleData(snap) {
+        console.log(snap.val())
         if (snap.val()) {
           setRequestList(fixRequests(snap.val()));
         }
@@ -72,15 +79,13 @@ function VolunteerScreen() {
                   coordinate={{"latitude": marker.latitude, "longitude": marker.longitude}}
                   title={marker.user}
                   description={marker.time}
-                  onPress={() => {
-                    setJobList(fixJobs(requestList['requests'][index]));
-                  }}
+                  onPress={() => {setSelectedJob(requestList['requests'][index])}}
                 />
               );
             })
           }
         </MapView>
-
+        <JobDetail job={selectedJob} />
         <JobList jobs={jobList} select={setRemoveJob} />
       </SafeAreaView>
     );

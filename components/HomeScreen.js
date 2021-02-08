@@ -1,10 +1,25 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Button, Text, View, StyleSheet, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import UserContext from '../UserContext';
 import snowyArt from '../assets/snowy.png';
 
+
 function HomeScreen( { navigation }) {
+  const user = useContext(UserContext);
+
+  if(!user) {
+    return (
+      <View style={styles.HomeScreen}>
+        <Text style={styles.Welcome}>Hi, {'\n'}welcome to ShovelSnow!</Text>
+        <Image style={styles.Img} source={require('../assets/snowy.png')} resizeMode="contain"/>
+        <View style={styles.btnCont}>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.HomeScreen}>
       <Text style={styles.Welcome}>Hi, {'\n'}welcome to ShovelSnow!</Text>
