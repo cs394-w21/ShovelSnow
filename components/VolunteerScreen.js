@@ -28,7 +28,6 @@ function VolunteerScreen({navigation}) {
           setRequestList(fixRequests(snap.val()));
         }
       }
-
       db.on('value', handleData, error => console.error(error));
       return () => { db.off('value', handleData); };
     }, []);
@@ -43,6 +42,14 @@ function VolunteerScreen({navigation}) {
         }
       };
     };
+
+    const accept = (job) => {
+      setJobList(fixJobs(job));
+    }
+
+    const reject = (job) => {
+      setSelectedJob(null);
+    }
 
     /*
     const removeJob = (user) => {
@@ -86,12 +93,13 @@ function VolunteerScreen({navigation}) {
                   coordinate={{"latitude": request[1].latitude, "longitude": request[1].longitude}}
                   title={request[1]['displayName']}
                   description={request[1].addr}
-                  onPress={() => setSelectedJob(fixJobs(request))}
+                  onPress={() => setSelectedJob(request)}
                 />
               );
             })
           }
         </MapView>
+        <JobDetail selectedJob={selectedJob} accept={accept} reject={reject} />
         <JobList jobList={jobList} select={console.log} />
       </SafeAreaView>
     );
