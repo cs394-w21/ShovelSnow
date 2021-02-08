@@ -1,26 +1,25 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Button } from 'react-native';
 
-function JobList({ jobs, select }) {
+function JobList({ jobList, select }) {
+  console.log('jobList :>> ', jobList);
   return (
     <View style={styles.container}>
       {
-        jobs['jobs'].map((job, i) => {
+        Object.entries(jobList['jobs']).map((job, i) => {
           return (
-            <TouchableOpacity
-              style={styles.job}
+            <View
+              style={styles.jobDiv}
               key={i}
-              onPress={() => {
-                select(job.user);
-              }}
             >
+              <Button 
+                onPress={select(job[0])}
+                title='Cancel Job'
+              />
               <Text style={styles.text}>
-                {`Press to cancel the request you accepted from ${job.user}`}
+                {`Shovel for ${job[1].displayName} at ${job.addr}`}
               </Text>
-              <Text style={styles.text}>
-                {`Address: ${job.addr}`}
-              </Text>
-            </TouchableOpacity>
+            </View>
           );
         })
       }
@@ -34,7 +33,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
 
   },
-  job: {
+  jobDiv: {
     flex: 1,
     flexDirection: 'column',
     alignContent: 'space-around',

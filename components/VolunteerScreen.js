@@ -7,26 +7,44 @@ import JobList from './JobList';
 import JobDetail from './JobDetail';
 
 function VolunteerScreen({navigation}) {
-    const [requestList, setRequestList] = useState({ 'requests' : []});
-    const [jobList, setJobList] = useState({ 'jobs': [] });
+    const [requestList, setRequestList] = useState({ 'requests': {} });
+    const [jobList, setJobList] = useState({ 'jobs': {} });
     const [selectedJob, setSelectedJob] = useState(null);
 
     const fixRequests = (json) => {
       return {
-        ...json,
-        requests: Object.values(json['requests'])
+        'requests': {
+          ...json,
+          ...requestList['requests']
+        }
       };
     };
+
+    useEffect(() => {
+      const db = firebase.database().ref('requests');
+
+      function handleData(snap) {
+        if (snap.val()) {
+          setRequestList(fixRequests(snap.val()));
+        }
+      }
+
+      db.on('value', handleData, error => console.error(error));
+      return () => { db.off('value', handleData); };
+    }, []);
 
     const fixJobs = (job) => {
+      const uid = job[0];
       return {
-        jobs: [
-          ...(jobList['jobs'].filter(existingJob => existingJob.user != job.user)),
-          job
-        ]
+        'jobs': {
+          //...(jobList['jobs'].filter(existingJob => existingJob.user != job.user)),
+          ...jobList['jobs'],
+          [uid]: job[1]
+        }
       };
     };
 
+    /*
     const removeJob = (user) => {
       firebase.database().ref(`requests/${user}`).remove()
         .then(() => {
@@ -36,34 +54,22 @@ function VolunteerScreen({navigation}) {
           });
         })
         .catch(() => {
-          console.log('error deleting request');
+          console.error('error deleting request');
         });
     };
 
     const setRemoveJob = user => removeJob(user);
+    */
 
     // const postJobs = firebase.database().ref('jobs').child(user.uid).set(jobList).catch(error => {
     //     setSubmitError(error.message);
     //   })
 
-    useEffect(() => {
-      const db = firebase.database().ref();
-
-      function handleData(snap) {
-        console.log(snap.val())
-        if (snap.val()) {
-          setRequestList(fixRequests(snap.val()));
-        }
-      }
-
-      db.on('value', handleData, error => console.log(error));
-      return () => { db.off('value', handleData); };
-    }, []);
 
     return (
       <SafeAreaView style={styles.container} >
         <MapView
-          style={styles.map}
+          style={styles.mapView}
           initialRegion={{
             latitude: 42.045597,
             longitude: -87.688568,
@@ -72,30 +78,33 @@ function VolunteerScreen({navigation}) {
           }}
         >
           {
-            requestList['requests'].map((marker, index) => {
+            Object.entries(requestList['requests']).map((request, index) => {
+              // request is [ 'uid', { request details object }]
               return (
                 <MapView.Marker
                   key={index}
-                  coordinate={{"latitude": marker.latitude, "longitude": marker.longitude}}
-                  title={marker.user}
-                  description={marker.time}
-                  onPress={() => {setSelectedJob(requestList['requests'][index])}}
+                  coordinate={{"latitude": request[1].latitude, "longitude": request[1].longitude}}
+                  title={request[1]['displayName']}
+                  description={request[1].addr}
+                  onPress={() => setSelectedJob(fixJobs(request))}
                 />
               );
             })
           }
         </MapView>
-        <JobDetail job={selectedJob} />
-        <JobList jobs={jobList} select={setRemoveJob} />
+        <JobList jobList={jobList} select={console.log} />
       </SafeAreaView>
     );
 }
+/*
+        <JobDetail job={selectedJob} />
+*/
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column'
   },
-  map: {
+  mapView: {
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height/2
   },
