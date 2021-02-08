@@ -7,30 +7,45 @@ import { createStackNavigator } from '@react-navigation/stack';
 import RequestHelpBtn from './components/RequestScreen';
 import HomeScreen from './components/HomeScreen';
 import VolunteerScreen from './components/VolunteerScreen'
-import DetailedRequestScreen from './components/DetailedRequestScreen'
 import UserContext  from "./UserContext";
 import RegisterScreen from './components/RegisterScreen';
-import LoginScreen from './components/LoginScreen';
+import {firebase} from './firebase';
+import { auth } from 'firebase';
 
 const Stack = createStackNavigator();
 
 function SignInButton({ navigation, user }) {
   return !user || !user.uid
-  ? <Button title="SignIn"
-    onPress={() => navigation.navigate('LoginScreen')}
+  ? <Button title="Sign in"
+    onPress={() => navigation.navigate('RegisterScreen')}
   />
-  : <Button title="Logout"
+  : <Button title="Log out"
     onPress={() => firebase.auth().signOut()}
   />
 }
 
 export default function App() {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(null);
+  const [auth, setAuth] = useState();
+
   useEffect(() => {
     firebase.auth().onAuthStateChanged((auth) => {
       setAuth(auth);
     });
   }, []);
+
+  useEffect(() => {
+    if (auth && auth.uid) {
+      const db = firebase.database().ref('users').child(auth.uid);
+      const handleData = snap => {
+        setUser({uid: auth.uid, ...snap.val()});
+      }
+      db.on('value', handleData, error => alert(error));
+      return () => { db.off('value', handleData); };
+    } else {
+      setUser(null);
+    }
+  }, [auth]);
 
   return (
     <UserContext.Provider value={user}>
@@ -47,9 +62,7 @@ export default function App() {
           />
           <Stack.Screen name="Request" component={RequestHelpBtn} />
           <Stack.Screen name="Volunteer" component={VolunteerScreen} />
-          <Stack.Screen name="RequestScreen" component={DetailedRequestScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
-          <Stack.Screen name="LoginScreen" component={LoginScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserContext.Provider>

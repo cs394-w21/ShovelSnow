@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import { SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import * as Yup from 'yup';
 import Form from "./Form";
+import {firebase} from '../firebase';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -17,21 +18,34 @@ const validationSchema = Yup.object().shape({
 });
 
 function RegisterScreen({ navigation }) {
-  const [authError, setAuthError] = useState('');
+  const [authError, setAuthError] = useState();
 
-  function handleOnSignUp(values) {
+  async function handleOnSignUp(values) {
     const { name, email, password } = values;
     setAuthError(null);
-    firebase.auth.createUserWithEmailAndPassword(email, password)
-    .then((authCredential) => {
+    try {
+      const authCredential = await firebase.auth().createUserWithEmailAndPassword(email, password)
       const user = authCredential.user;
-      user.updateProfile({displayName: name}).then(() => {
-        navigation.navigate('HomeScreen');
-      });
-    })
-    .catch((error) => {
+      await user.updateProfile({displayName: name});
+      navigation.navigate('Home');
+    } catch (error) {
       setAuthError(error.message);
-    });
+    }
+  }
+
+  async function handleOnLogin(values) {
+    const { email, password } = values;
+    setAuthError(null);
+    try {
+      await firebase.auth().signInWithEmailAndPassword(email, password);
+      navigation.navigate('Home');
+    } catch (error) {
+      setAuthError(error.message);
+    }
+  }
+
+  async function handleOnSubmit(values) {
+    return values.confirm ? handleOnSignUp(values) : handleOnLogin(values);
   }
 
   return (
@@ -39,16 +53,18 @@ function RegisterScreen({ navigation }) {
       <ScrollView>
         <Form
           initialValues={{
+            name: '',
             email: '',
             password: '',
             confirm: '',
           }}
           validationSchema={validationSchema}
-          onSubmit={handleOnSignUp}
+          onSubmit={handleOnSubmit}
         >
           <Form.Field
             name="name"
             leftIcon="identifier"
+            placeholder="Enter name"
             autoCorrect={false}
             autoCapitalize='none'
           />
@@ -70,7 +86,7 @@ function RegisterScreen({ navigation }) {
             textContentType="password"
           />
           <Form.Field
-            name="confirmPassword"
+            name="confirm"
             leftIcon="lock"
             placeholder="Confirm password"
             autoCapitalize="none"
