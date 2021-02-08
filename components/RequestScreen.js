@@ -26,7 +26,7 @@ const RequestHelpBtn = ({navigation}) => {
 
 
   function handleSubmit(values) {
-    const { user, time, addr } = values;
+    const { user, addr } = values;
     let longitude;
     let latitude;
     let accepted;
@@ -42,7 +42,7 @@ const RequestHelpBtn = ({navigation}) => {
       accepted = 0;
     })
     .then(() => {
-        const request = { user, time, addr, longitude, latitude, accepted };
+        const request = { user, addr, longitude, latitude, accepted };
         firebase.database().ref('requests').child(user).set(request).catch(error => {
           setSubmitError(error.message);
         });
