@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import { Button, SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import * as Yup from 'yup';
 import Form from "./Form";
+import { firebase } from '../firebase';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()

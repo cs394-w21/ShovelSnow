@@ -1,9 +1,7 @@
 import React, { useContext } from 'react';
 import { Button, Text, View, StyleSheet, Image } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 import UserContext from '../UserContext';
-import snowyArt from '../assets/snowy.png';
+import {firebase} from '../firebase';
 
 
 function HomeScreen( { navigation }) {
