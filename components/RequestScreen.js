@@ -89,7 +89,7 @@ const RequestHelpBtn = ({ navigation }) => {
           {<Form.ErrorMessage error={submitError} visible={true} />}
         </Form>
         <View style={styles.subcontainer}>
-          { request === null || request === {} ? null : <Text>Press if the snow's been shoveled</Text> }
+          { request === null || request === {} ? null : <Text style={styles.text}>Press if the snow's been shoveled</Text> }
           { request === null || request === {} ? null : <Button title="Shoveled!" onPress={handleOnPress}/> }
         </View>
       </ScrollView>
@@ -114,6 +114,10 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     padding: '20px'
+  },
+  text: {
+    fontSize: '16px',
+    textAlign: 'center'
   }
 });
 
