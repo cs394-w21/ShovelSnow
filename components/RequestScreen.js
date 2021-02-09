@@ -1,68 +1,70 @@
-import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
-import React, {useState, useContext} from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Alert } from 'react-native';
-import {firebase} from '../firebase'
+import React, { useState, useContext, useEffect } from 'react';
+import { Text, View, StyleSheet, SafeAreaView, ScrollView, Button } from 'react-native';
+import { firebase } from '../firebase'
 import Form from './Form'
-import * as Yup from 'yup';
-import { NavigationContainer } from '@react-navigation/native';
 import UserContext from '../UserContext';
+import * as Yup from 'yup';
 
-// const validationSchema = Yup.object().shape({
-//   user: Yup.string()
-//     .required()
-//     .label('User'),
-//   time: Yup.string()
-//     .required()
-//     .matches(/(M|Tu|W|Th|F)+ +\d\d?:\d\d-\d\d?:\d\d/, 'Must be weekdays followed by start and end time')
-//     .label('Meeting times'),
-//   title: Yup.string()
-//     .required()
-//     .label('Title'),
-// });
+const validationSchema = Yup.object().shape({ 
+  addr: Yup.string().required().label('Address')
+});
 
-const RequestHelpBtn = ({navigation}) => {
-  const [requested, setRequested] = useState(0);
-  const textInside = ['SHOVEL!', 'CANCEL!'];
+const RequestHelpBtn = ({ navigation }) => {
   const [submitError, setSubmitError] = useState('');
+  const [request, setRequest] = useState(null);
 
   const user = useContext(UserContext);
+
+  useEffect(() => {
+    const db = firebase.database().ref(`requests/${user.uid}`);
+    function handleData(snap) {
+      if (snap.val()) {
+        setRequest(snap.val());
+      }
+    }
+
+    db.on('value', handleData, error => console.error(error));
+    return () => { db.off('value', handleData); };
+  },[]);
 
   function handleSubmit(values) {
     const { addr } = values;
     let longitude;
     let latitude;
     let accepted;
-
-    if(requested == 1) return null;
+    let volunteer;
 
     fetch(`http://api.positionstack.com/v1/forward?access_key=300bfd70ae97e0cdc39aa8c66e930ada&query=${addr}`, {
       method: 'GET'
     })
-    .then((res) => {
-      return res.json();
-    })
-    .then((resJson) => {
-      longitude = resJson['data'][0]['longitude'];
-      latitude = resJson['data'][0]['latitude'];
-      accepted = 0;
-    })
-    .then(() => {
+      .then((res) => {
+        return res.json();
+      })
+      .then((resJson) => {
+        longitude = resJson['data'][0]['longitude'];
+        latitude = resJson['data'][0]['latitude'];
+        accepted = 0;
+        volunteer = '';
+      })
+      .then(() => {
         let displayName = user.name
-        const request = { displayName, addr, longitude, latitude, accepted };
-        firebase.database().ref('requests').child(user.uid).set(request).catch(error => {
+        const request = { displayName, addr, longitude, latitude, accepted, volunteer };
+        firebase.database().ref('requests').child(user.uid).set(request)
+        .then(() => {
+          setRequest({[user.uid]: request});
+        })
+        .catch(error => {
           setSubmitError(error.message);
         });
-        setRequested(1);
-    })
-    .catch(error => {console.error(error)});
+      })
+      .catch(error => { console.error(error) });
   }
 
-  function handleOnPress() {
-    if (requested == 0) {
-      setRequested(1);
-    } else {
-      setRequested(0);
-    }
+  async function handleOnPress() {
+    console.log('request.volunteer :>> ', request.volunteer);
+    await firebase.database().ref(`requests/${user.uid}`).remove();
+    await firebase.database().ref(`jobs/${request['volunteer']}/${user.uid}`).remove();
+    setRequest(null);
   }
 
   return (
@@ -73,23 +75,23 @@ const RequestHelpBtn = ({navigation}) => {
           initialValues={{
             addr: ''
           }}
-          // validationSchema={validationSchema}
+          validationSchema={validationSchema}
           onSubmit={(values) => {
             handleSubmit(values);
-            navigation.navigate('Home');
           }}
         >
-            <Form.Field
-                name="addr"
-                leftIcon="format-title"
-                placeholder="Address"
-            />
-            <Form.Button style={styles.Btn} title={'Request'} />
-            {<Form.ErrorMessage error={submitError} visible={true} />}
+          <Form.Field
+            name="addr"
+            leftIcon="format-title"
+            placeholder="Address"
+          />
+          <Form.Button style={styles.Btn} title={'Request'} />
+          {<Form.ErrorMessage error={submitError} visible={true} />}
         </Form>
-        {/* <TouchableOpacity onPress={handleOnPress} style={styles.RequestHelpBtn}>
-          <Text>{textInside[requested]}</Text>
-        </TouchableOpacity> */}
+        <View style={styles.subcontainer}>
+          { request === null || request === {} ? null : <Text>Press if the snow's been shoveled</Text> }
+          { request === null || request === {} ? null : <Button title="Shoveled!" onPress={handleOnPress}/> }
+        </View>
       </ScrollView>
     </SafeAreaView>
 
@@ -101,11 +103,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    alignContent: 'center'
   },
   Btn: {
     color: '#fafafa',
     backgroundColor: '#3d8ccc',
-
+  },
+  subcontainer: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    padding: '20px'
   }
 });
 
